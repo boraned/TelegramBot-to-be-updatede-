@@ -3,14 +3,10 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 
 import asyncio
 
-
 import infoDeMarket
-
 
 token = ""
 bot_username = "@StockMarketInfoGrabberBot"
-
-
 
 #commands
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -23,15 +19,15 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 user_subscriptions = {}
 
-
 async def infome_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     user_subscriptions[chat_id] = True
     await update.message.reply_text("You will start receiving messages. It'll automatically stop in 30 minutes.")
     print(user_subscriptions.items())
-    await give_em_info(app)
+    asyncio.create_task(give_em_info(context.application))
 
 async def stopinfo_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    print("Someone stopped recieving information.")
     chat_id = update.effective_chat.id
     user_subscriptions[chat_id] = False
     await update.message.reply_text("You're no longer recieving information.")
@@ -41,15 +37,23 @@ async def stopinfo_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 #ASIL OLAY
 async def give_em_info(app: Application) -> None:
     print("Sending info to someone")
+    fag = True
     while True:
+        infoA = infoDeMarket.CoinMarketCapInfo()
         for chatid, subscribed in user_subscriptions.items():
             if subscribed:
                 try:
-                    await app.bot.send_message(chat_id=chatid, text=infoDeMarket.GatherAll())
+                    if fag:
+                        await app.bot.send_message(chat_id=chatid, text=infoA)                   
                 except:
                     print(f"Failed to send message to {chatid}:")
-        await asyncio.sleep(10)
-
+        await asyncio.sleep(5)
+        if infoA != infoDeMarket.CoinMarketCapInfo():
+            fag = True
+            print(infoDeMarket.CoinMarketCapInfo())
+        else:
+            fag = False
+            print("Prices hasnt changed")
 
 
 
