@@ -7,7 +7,7 @@ import asyncio
 import infoDeMarket
 
 
-token = "7063934191:AAGR1HY63Dp-_YHbeJF2sEtwtQ4RuLbq0dE"
+token = ""
 bot_username = "@StockMarketInfoGrabberBot"
 
 
